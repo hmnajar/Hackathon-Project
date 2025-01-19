@@ -11,4 +11,4 @@ Vincent Nguyen
 Dexter Yu
 
 The main 3 files are main.py, WebScraper.py, and copyOfDextersDraft.py . The csv are just files with data used to calculate the win rate.
-To run our file
+To run our file download all the csv's and to test the prediction run main.py.
