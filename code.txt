@@ -1,0 +1,93 @@
+# avg stats /5
+num_players_favored = len(teamPlayers[favoredTeam])
+num_players_unfavored = len(teamPlayers[unfavoredTeam])
+
+favored_team_avg_stats = {
+    'ACS': favored_team_statlist['ACS'] / num_players_favored,
+    'K:D': favored_team_statlist['K:D'] / num_players_favored,
+    'KAST': favored_team_statlist['KAST'] / num_players_favored,
+    'CL%': favored_team_statlist['CL%'] / num_players_favored,
+    'FKPR': favored_team_statlist['FKPR'] / num_players_favored,
+}
+
+unfavored_team_avg_stats = {
+    'ACS': unfavored_team_statlist['ACS'] / num_players_unfavored,
+    'K:D': unfavored_team_statlist['K:D'] / num_players_unfavored,
+    'KAST': unfavored_team_statlist['KAST'] / num_players_unfavored,
+    'CL%': unfavored_team_statlist['CL%'] / num_players_unfavored,
+    'FKPR': unfavored_team_statlist['FKPR'] / num_players_unfavored,
+}
+
+
+match_stats = pd.DataFrame({
+    'ACS': [favored_team_avg_stats['ACS'], unfavored_team_avg_stats['ACS']],
+    'K:D': [favored_team_avg_stats['K:D'], unfavored_team_avg_stats['K:D']],
+    'KAST': [favored_team_avg_stats['KAST'], unfavored_team_avg_stats['KAST']],
+    'CL%': [favored_team_avg_stats['CL%'], unfavored_team_avg_stats['CL%']],
+    'FKPR': [favored_team_avg_stats['FKPR'], unfavored_team_avg_stats['FKPR']]
+}, index=['Favored', 'Unfavored'])
+match_stats['winner'] = [
+    1 if (favored_team_avg_stats['ACS'] > unfavored_team_avg_stats['ACS'] and
+           favored_team_avg_stats['K:D'] > unfavored_team_avg_stats['K:D'] and
+           favored_team_avg_stats['KAST'] > unfavored_team_avg_stats['KAST']) else 0,  # for 'home'
+    0 if (favored_team_avg_stats['ACS'] > unfavored_team_avg_stats['ACS'] and
+           favored_team_avg_stats['K:D'] > unfavored_team_avg_stats['K:D'] and
+           favored_team_avg_stats['KAST'] > unfavored_team_avg_stats['KAST']) else 1   # for 'away'
+]
+
+
+# estimated match stats
+print(match_stats)
+
+match_stats['winner'] = [
+    1 if (favored_team_avg_stats['ACS'] > unfavored_team_avg_stats['ACS'] and
+           favored_team_avg_stats['K:D'] > unfavored_team_avg_stats['K:D'] and
+           favored_team_avg_stats['KAST'] > unfavored_team_avg_stats['KAST'] ) else 0,  # for 'Favored'
+    0 if (favored_team_avg_stats['ACS'] > unfavored_team_avg_stats['ACS'] and
+           favored_team_avg_stats['K:D'] > unfavored_team_avg_stats['K:D'] and
+           favored_team_avg_stats['KAST'] > unfavored_team_avg_stats['KAST'] ) else 1   # for 'Unfavored'
+]
+
+features = ['ACS', 'K:D', 'KAST', 'CL%', 'FKPR']
+
+X = match_stats[features]
+y = match_stats['winner']
+
+
+
+# using logistic reg model
+model = LogisticRegression(random_state=42)
+
+num_trials = 25
+
+estimates = []
+
+for trial in range(num_trials):
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    model.fit(X_train, y_train)
+
+    y_pred = model.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred)
+    print(f"Model Accuracy: {accuracy * 100:.2f}%")
+    estimates.append(accuracy)
+
+print(np.unique(y_train))
+print(np.unique(y_test))
+
+new_match = {
+    'ACS': [favored_team_avg_stats['ACS']], 
+    'K:D': [favored_team_avg_stats['K:D']],
+    'KAST': [favored_team_avg_stats['KAST']],
+    'CL%': [favored_team_avg_stats['CL%']],
+    'FKPR': [favored_team_avg_stats['FKPR']]
+}
+new_match_df = pd.DataFrame(new_match)
+
+# Predict the winner
+predicted_winner = model.predict(new_match_df)
+
+if predicted_winner[0] == 1:
+  print(f"({favoredTeam}) is predicted to win!")
+else:
+  print(f"({unfavoredTeam}) is predicted to win!")
