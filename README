@@ -1,0 +1,14 @@
+https://www.youtube.com/watch?v=SUP5VVZub7E&ab_channel=VincentN
+
+Valorant Match Predictor
+The front end is made with Python using the tkinter library to display drop-down menus to select teams and the map. 
+The start button is supposed to read those selected menus and then use our backend Python code to determine what team is going to win and their chances of winning
+
+Contributors list:
+Anthony Mashou
+Hector Najar
+Vincent Nguyen
+Dexter Yu
+
+The main 3 files are main.py, WebScraper.py, and copyOfDextersDraft.py . The csv are just files with data used to calculate the win rate.
+To run our file
