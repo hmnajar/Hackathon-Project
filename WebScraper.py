@@ -45,6 +45,7 @@ for stats in data:
         player_name.append(player)
         
         # find by xpath is used for the remaining because they don't have unique class names
+        # xpath is taken from inspecting element on the target page
         acs = stats.find_element(By.XPATH,'./td[5]').text
         average_combat_score.append(acs)
 
@@ -59,7 +60,7 @@ for stats in data:
 
         clutch = stats.find_element(By.XPATH, './td[14]').text
         clutch_percent.append(clutch)
-
+    # catch exception in case something goes wrong and move to the next row
     except Exception as e:
         print(f"Error: Skipping row:  {e}")
 # close Google Chrome window when finished
