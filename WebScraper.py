@@ -13,8 +13,14 @@ import os
 website = 'https://www.vlr.gg/event/stats/2004/champions-tour-2024-americas-stage-1'
 
 # use options library to keep Chrome window from popping up while still allowing for data to be scraped
+options = Options()
+options.add_argument("--headless=new")
+
+# attempts to use chromedriver.exe that is in the repository, but if it fails
+# then you can use the filepath from your personal computer to run it
 script_dir = os.path.dirname(os.path.abspath(__file__))
-path = os.path.join(script_dir, "chromedriver")
+path = os.path.join(script_dir, "chromedriver.exe")
+
 
 # create path for program to access chrome
 #path = r'C:\Users\Hector\Downloads\chromedriver-win64\chromedriver-win64\chromedriver.exe'
